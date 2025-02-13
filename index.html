@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реалистичное проваливание в снег</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #b3e5fc, #e0f7fa);
+            overflow: hidden; /* Скрывает лишнее за пределами экрана */
+        }
+        .scene {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            background: white;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 3px solid #ccc;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
+        }
+        .snow {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: radial-gradient(circle, #ffffff 60%, #e0e0e0);
+            border-radius: 50% / 20%;
+        }
+        .person {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 180px;
+            text-align: center;
+            font-size: 80px;
+            cursor: pointer;
+            transition: transform 0.2s ease-out;
+        }
+        .skier {
+            left: 20%;
+            background: url('skier_.jpeg') no-repeat center/contain;
+            width: 700px;
+            height: 250px;
+        }
+        .walker {
+            left: 80%;
+            background: url('walker_.avif') no-repeat center/contain;
+            width: 400px;
+            height: 250px;
+        }
+        .sunk {
+            animation: sink 1.5s forwards;
+        }
+
+        /* Эффекты для пешехода и лыжника */
+        @keyframes sink-walker {
+            0% { transform: translate(-50%, 0); }
+            100% { transform: translate(-50%, 60px); }
+        }
+        @keyframes return-walker {
+            100% { transform: translate(-50%, 0); }
+            0% { transform: translate(-50%, 60px); }
+        }
+
+        @keyframes sink-skier {
+            0% { transform: translate(-50%, 0); }  
+            20% { transform: translate(-50%, 49px); } 
+            50% { transform: translate(-40%, 49px); }
+            70% { transform: translate(-50%, 50px); }
+            100% { transform: translate(-60%, 51px); }
+        }
+        
+        @keyframes return-skier {
+            100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 49px); }
+            25% { transform: translate(-50%, 50px); }
+            0% { transform: translate(-60%, 51px); }
+        }
+
+        /* Стиль для снежинок */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background-color: white;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: fall 10s linear infinite, drift 5s ease-in-out infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10px;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+
+        @keyframes drift {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-50px); }
+            50% { transform: translateX(50px); }
+            75% { transform: translateX(-30px); }
+            100% { transform: translateX(30px); }
+        }
+
+        .snowflake {
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ffffff 0%, #e0e0e0 70%);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            opacity: 0.9;
+        }
+
+        .snowflake:nth-child(odd) {
+            width: 8px;
+            height: 8px;
+            animation-duration: 12s;
+        }
+
+        .snowflake:nth-child(even) {
+            width: 12px;
+            height: 12px;
+            animation-duration: 9s;
+        }
+
+        /* Слой снега на земле */
+        .snow-layer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: radial-gradient(circle, rgba(233, 233, 233, 0.9) 40%, rgba(216, 201, 201, 0.6) 70%, rgba(167, 167, 167, 0.8) 100%);
+            border-radius: 10%;
+            z-index: 1;
+        }
+
+        /* Эффект проседания снега */
+        .sunk-snow {
+            height: 70px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 40%, rgba(255, 255, 255, 0.4) 0%, rgba(200, 200, 200, 0.8) 100%);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Мягкие тени для земли */
+        .snow-layer::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 600px) {
+            .scene {
+                width: 70vw;
+                height: 60vh;
+            }
+            .person {
+                width: 20vw;
+                height: 15vh;
+                bottom: 12vh;
+            }
+            .skier {
+                left: 22%;
+                width: 30vw;
+                bottom: 75px;
+                height: 18vh;
+            }
+            .walker {
+                left: 70%;
+                width: 20vw;
+                bottom: 87px;
+                height: 15vh;
+            }
+            .snow-layer {
+                height: 3vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="person walker"></div>
+        <div class="person skier"></div>
+        <div class="snow-layer"></div>
+        <div class="snow"></div>
+    </div>
+
+    <script>
+        // Функция для создания случайных снежинок
+        function createSnowflakes() {
+            const numberOfSnowflakes = 100; // Количество снежинок
+            for (let i = 0; i < numberOfSnowflakes; i++) {
+                let snowflake = document.createElement("div");
+                snowflake.classList.add("snowflake");
+                snowflake.style.left = `${Math.random() * 100}%`; // Случайное начальное положение
+                snowflake.style.animationDuration = `${Math.random() * 3 + 7}s`; // Случайная скорость падения
+                snowflake.style.animationDelay = `${Math.random() * 5}s`; // Задержка старта анимации
+                document.querySelector('.scene').appendChild(snowflake);
+            }
+        }
+
+        // Запуск создания снежинок
+        createSnowflakes();
+
+        // Функция для переключения анимации
+        function toggleAnimation(person, animation, returnAnimation) {
+            if (person.classList.contains("sunk")) {
+                // Если уже был провал, возвращаем обратно
+                person.classList.remove("sunk");
+                person.style.animation = `${returnAnimation} 1.5s forwards`;
+            } else {
+                // Если не было провала, проваливаем персонажа
+                person.classList.add("sunk");
+                person.style.animation = `${animation} 1.5s forwards`;
+            }
+        }
+
+        // Обработчики нажатия на персонажей
+        document.querySelector(".walker").addEventListener("click", function() {
+            toggleAnimation(this, "sink-walker", "return-walker");
+        });
+
+        document.querySelector(".skier").addEventListener("click", function() {
+            toggleAnimation(this, "sink-skier", "return-skier");
+        });
+    </script>
+</body>
+</html>
